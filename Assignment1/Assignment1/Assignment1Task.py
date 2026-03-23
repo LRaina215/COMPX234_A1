@@ -97,7 +97,12 @@ class Assignment1:
                 self.machineSleep()
                 # Machine wakes up and sends a print request
                 # Write code here
+                # Make sure the numbers and the threads are safe
+                self.isRequestSafe(self.machineID)
+                # If request is safe, then executing printrequest
                 self.printRequest(self.machineID)
+                # After finishing all the printing, release all the mutex
+                self.postRequest()
 
         def machineSleep(self):
             sleepSeconds = random.randint(1, self.outer.MAX_MACHINE_SLEEP)
