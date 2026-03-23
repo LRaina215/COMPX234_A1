@@ -74,8 +74,15 @@ class Assignment1:
 
         def printDox(self, printerID):
             print(f"Printer ID: {printerID} : now available")
+            #Write code here for Binary and counting Semaphore
+            # Acquire the binary semaphore to ensure mutual exclusion
+            self.outer.binary.acquire()
             # Print from the queue
             self.outer.print_list.queuePrint(printerID)
+            # Release the binary semaphore
+            self.outer.binary.release()
+            # Increment the semaphore count so that machines can send requests
+            self.outer.semaphore.release()
 
     # Machine class
     class machineThread(threading.Thread):
@@ -96,9 +103,24 @@ class Assignment1:
             sleepSeconds = random.randint(1, self.outer.MAX_MACHINE_SLEEP)
             time.sleep(sleepSeconds)
 
+        def isRequestSafe(self, id):
+            print(f"Machine {id} Checking availability")
+            # Acquire counting semaphore (wait for an available printer)
+            self.outer.semaphore.acquire()
+            # Acquire binary semaphore for mutual exclusion of the print queue
+            self.outer.binary.acquire()
+            # Both semaphores acquired
+            print(f"Machine {id} will proceed")
+        
         def printRequest(self, id):
             print(f"Machine {id} Sent a print request")
             # Build a print document
             doc = printDoc(f"My name is machine {id}", id)
             # Insert it in the print queue
             self.outer.print_list.queueInsert(doc)
+
+        # Write code here for postRequest, i.e., after inserting the print request
+        def postRequest(self, id):
+            print(f"Machine {id} Releasing binary semaphore")
+            # Release the binary semaphore
+            self.outer.binary.release()
