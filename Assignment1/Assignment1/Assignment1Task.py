@@ -81,12 +81,16 @@ class Assignment1:
             #Write code here for Binary and counting Semaphore
             # Acquire the binary semaphore to ensure mutual exclusion
             self.outer.binary.acquire()
+            # Check whether the quene has message or not, avoiding giving more semaphore then result in bugs!!!
+            has_message = self.outer.print_list.head is not None
             # Print from the queue
             self.outer.print_list.queuePrint(printerID)
             # Release the binary semaphore
             self.outer.binary.release()
-            # Increment the semaphore count so that machines can send requests
-            self.outer.semaphore.release()
+            # If the quene doesn't have message, then don't give semaohore but exiting immediately.
+            if has_message:
+                # Increment the semaphore count so that machines can send requests
+                self.outer.semaphore.release()
 
     # Machine class
     class machineThread(threading.Thread):
