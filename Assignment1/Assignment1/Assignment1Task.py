@@ -19,6 +19,10 @@ class Assignment1:
         self.print_list = printList()  # Create an empty list of print requests
         self.mThreads = []             # list for machine threads
         self.pThreads = []             # list for printer threads
+        
+        # Add the semaphore and binary variable!!!
+        self.semaphore = threading.Semaphore(self.NUM_PRINTERS)
+        self.binary = threading.Semaphore(1)
 
     def startSimulation(self):
         # Create Machine and Printer threads
@@ -102,7 +106,7 @@ class Assignment1:
                 # If request is safe, then executing printrequest
                 self.printRequest(self.machineID)
                 # After finishing all the printing, release all the mutex
-                self.postRequest()
+                self.postRequest(self.machineID)
 
         def machineSleep(self):
             sleepSeconds = random.randint(1, self.outer.MAX_MACHINE_SLEEP)
