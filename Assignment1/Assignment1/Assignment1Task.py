@@ -79,8 +79,11 @@ class Assignment1:
         def printDox(self, printerID):
             print(f"Printer ID: {printerID} : now available")
             #Write code here for Binary and counting Semaphore
-            # Acquire the binary semaphore to ensure mutual exclusion
-            self.outer.binary.acquire()
+            try:
+                # Acquire the binary semaphore to ensure mutual exclusion
+                self.outer.binary.acquire()
+            except Exception as e:
+                print("Unexpected error:", e)
             # Check whether the quene has message or not, avoiding giving more semaphore then result in bugs!!!
             has_message = self.outer.print_list.head is not None
             # Print from the queue
@@ -118,10 +121,17 @@ class Assignment1:
 
         def isRequestSafe(self, id):
             print(f"Machine {id} Checking availability")
-            # Acquire counting semaphore (wait for an available printer)
-            self.outer.semaphore.acquire()
-            # Acquire binary semaphore for mutual exclusion of the print queue
-            self.outer.binary.acquire()
+            try:
+                # Acquire counting semaphore (wait for an available printer)
+                self.outer.semaphore.acquire()
+            except Exception as e:
+                print("Unexpected error:", e)
+                
+            try:
+                # Acquire binary semaphore for mutual exclusion of the print queue
+                self.outer.binary.acquire()
+            except Exception as e:
+                print("Unexpected error:", e)
             # Both semaphores acquired
             print(f"Machine {id} will proceed")
         
